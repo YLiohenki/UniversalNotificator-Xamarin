@@ -6,6 +6,8 @@ using Android.Views;
 using Android.Widget;
 using Android.OS;
 using Android.Database;
+using Model;
+using System.Linq;
 
 namespace UniversalNotificator_Xamarin
 {
@@ -36,16 +38,10 @@ namespace UniversalNotificator_Xamarin
 
         private void FillData()
         {
-            ICursor notesCursor = this.dbHelper.FetchAllNotes();
-            this.StartManagingCursor(notesCursor);
-
-            var from = new[] { NotificationsDBAdapter.KeyTitle };
-
-            var to = new[] { Resource.Id.text1 };
-
-            var notes =
-                new SimpleCursorAdapter(this, Resource.Layout.Row, notesCursor, from, to);
-            this.ListAdapter = notes;
+            var repo = new RemoteRepository();
+            var result = repo.GetAllEntries();
+            var items = result.Select(x => x.title).ToArray();
+            ListAdapter = new ArrayAdapter<String>(this, Android.Resource.Layout.SimpleListItem1, items);
         }
     }
 }
