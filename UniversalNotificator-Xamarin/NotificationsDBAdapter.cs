@@ -4,6 +4,7 @@ namespace UniversalNotificator_Xamarin
     using Android.Database;
     using Android.Database.Sqlite;
     using Android.Util;
+    using Model;
     class NotificationsDBAdapter
     {
         public const string KeyTitle = "title";
@@ -58,19 +59,31 @@ namespace UniversalNotificator_Xamarin
 
         public ICursor FetchAllNotes()
         {
+            var repo = new RemoteRepository();
+            var result = repo.GetAllEntries();
+
             string[] columns = new string[] { "_id", "title", "body" };
 
             MatrixCursor matrixCursor = new MatrixCursor(columns);
-            var set = new ArraySet();
+
+            foreach (var r in result)
+            {
+                var set = new ArraySet();
+                set.Add(r.id);
+                set.Add(r.title.ToString());
+                set.Add(r.body.ToString());
+                matrixCursor.AddRow(set);
+            }
+            /*var set = new ArraySet();
             set.Add("1");
-            set.Add("Super Title");
-            set.Add("3");
+            set.Add("ZXC");
+            set.Add("QWE");
 
             matrixCursor.AddRow(set);
-            matrixCursor.AddRow(set);
+            matrixCursor.AddRow(set);*/
 
             return matrixCursor;
-            return this.db.Query(DatabaseTable, new[] { KeyRowId, KeyTitle, KeyBody }, null, null, null, null, null);
+            //return this.db.Query(DatabaseTable, new[] { KeyRowId, KeyTitle, KeyBody }, null, null, null, null, null);
         }
 
         public ICursor FetchNote(long rowId)
